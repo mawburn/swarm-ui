@@ -8,4 +8,4 @@ plugins:
 AllCops:
   SuggestExtensions: false
   Exclude:
-    - ".ruby-lsp/**/*"
+    - '.ruby-lsp/**/*'

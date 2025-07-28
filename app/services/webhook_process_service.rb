@@ -11,13 +11,23 @@ class WebhookProcessService
       return unless project.github_webhook_enabled?
       return if project.github_webhook_processes.where(status: "running").exists?
 
-      # Ensure we have repo owner and name
+      unless GithubCliService.available?
+        Rails.logger.error("GitHub CLI not available, cannot start webhook forwarding")
+        return
+      end
+
+      begin
+        GithubCliService.ensure_dependencies!
+      rescue => e
+        Rails.logger.error("GitHub CLI dependency check failed: #{e.message}")
+        return
+      end
+
       unless project.github_repo_owner.present? && project.github_repo_name.present?
         Rails.logger.error("GitHub repo owner/name not set for project #{project.id}")
         return
       end
 
-      # Get enabled events
       events = project.github_webhook_events.where(enabled: true).pluck(:event_type)
       if events.empty?
         Rails.logger.warn("No events enabled for project #{project.id}")
@@ -58,7 +68,7 @@ class WebhookProcessService
           *cmd,
           out: write_out,
           err: write_err,
-          pgroup: true, # Create new process group for easier management
+          pgroup: true,
         )
 
         Rails.logger.info("Spawned gh process with PID #{pid}, PGID: #{Process.getpgid(pid)}")
@@ -68,11 +78,9 @@ class WebhookProcessService
 
         process.update!(pid: pid, status: "running")
 
-        # Start threads to capture output
         Thread.new { capture_output(read_out, process, "stdout") }
         Thread.new { capture_output(read_err, process, "stderr") }
 
-        # Monitor process in background thread
         Thread.new { monitor_process(process) }
 
         Rails.logger.info("Webhook forwarder started for project #{project.id} with PID #{pid}")

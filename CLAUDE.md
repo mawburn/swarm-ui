@@ -16,6 +16,7 @@ SwarmUI is purpose-built for vibe coding mastery. Unlike traditional IDEs that b
 - Seek a pure vibe coding experience
 
 Key principles:
+
 - **Minimal, essential tooling** - Just what you need for vibe coding, nothing more
 - **Natural language first** - Express intent, not commands
 - **Flow state optimization** - No interruptions, no friction
@@ -40,17 +41,21 @@ This isn't an IDE with AI features added - it's a precision instrument for vibe 
 ## Development Commands
 
 ### Initial Setup
+
 ```bash
 bin/setup
 ```
 
 ### Running the Development Server
+
 ```bash
 bin/dev
 ```
+
 This starts both the Rails server and Tailwind CSS watcher.
 
 ### Database Commands
+
 ```bash
 bin/rails db:create      # Create the database
 bin/rails db:migrate     # Run migrations
@@ -59,6 +64,7 @@ bin/rails db:prepare     # Create, migrate, and seed in one command
 ```
 
 ### Testing
+
 ```bash
 bin/rails test           # Run all tests
 bin/rails test test/models/user_test.rb  # Run specific test file
@@ -66,6 +72,7 @@ bin/rails test test/models/user_test.rb:42  # Run specific test by line number
 ```
 
 ### Code Quality
+
 ```bash
 bin/rubocop -A           # Run RuboCop for code style checks and auto-fix violations
 bin/brakeman             # Run security vulnerability scan
@@ -85,12 +92,14 @@ The application follows standard Rails conventions:
 - **test/**: Minitest test files
 
 ### Testing Stack
+
 - **Minitest**: Default Rails testing framework
 - **Factory Bot**: Test data generation
 - **Capybara**: Integration/system testing
 - **WebMock/VCR**: HTTP request mocking
 
 ### Code Style
+
 The project uses RuboCop with Shopify's style guide. Always run `bin/rubocop -A` and fix linting errors before committing changes.
 
 ## Development Workflow
@@ -112,12 +121,14 @@ The project uses RuboCop with Shopify's style guide. Always run `bin/rubocop -A`
 - Follow RESTful routing conventions
 
 ## Forms
+
 - Use Simple Form for all forms in the application
 - Simple Form has been configured to work with Tailwind CSS
 - Refer to `llm_docs/simple_form_tailwind.md` for usage guidelines and examples
 - The configuration uses custom wrappers for proper Tailwind styling
 
 ## UI Design Guidelines
+
 - Always use Tailwind CSS 4 utility classes for styling in views and components.
 - Follow the official Tailwind CSS 4 documentation that is in llm_docs/tailwind for syntax, features, and best practices.
 - Prefer semantic HTML and accessibility best practices alongside Tailwind classes.
@@ -125,12 +136,14 @@ The project uses RuboCop with Shopify's style guide. Always run `bin/rubocop -A`
 - For custom themes, define variables using `@theme` in app/assets/tailwind/application.css.
 
 ### Tailwind CSS 4 Documentation
-The `llm_docs/tailwind/` directory contains the complete Tailwind CSS 4 documentation split into individual MDX files. 
+
+The `llm_docs/tailwind/` directory contains the complete Tailwind CSS 4 documentation split into individual MDX files.
 
 **IMPORTANT**: Always consult `llm_docs/tailwind/INDEX.md` first to quickly find the right documentation file for any Tailwind utility class or concept.
 
 When you need to:
-- Look up a specific utility class → Read `llm_docs/tailwind/[utility-name].mdx` (e.g., `llm_docs/tailwind/background-color.mdx` for bg-* classes)
+
+- Look up a specific utility class → Read `llm_docs/tailwind/[utility-name].mdx` (e.g., `llm_docs/tailwind/background-color.mdx` for bg-\* classes)
 - Understand responsive design → Read `llm_docs/tailwind/responsive-design.mdx`
 - Work with states (hover, focus, etc.) → Read `llm_docs/tailwind/hover-focus-and-other-states.mdx`
 - Customize the theme → Read `llm_docs/tailwind/theme.mdx`
@@ -138,6 +151,7 @@ When you need to:
 - Use functions and directives → Read `llm_docs/tailwind/functions-and-directives.mdx`
 
 Common utility class files:
+
 - Colors: `llm_docs/tailwind/colors.mdx`, `llm_docs/tailwind/background-color.mdx`, `llm_docs/tailwind/color.mdx`
 - Layout: `llm_docs/tailwind/display.mdx`, `llm_docs/tailwind/position.mdx`, `llm_docs/tailwind/flex.mdx`, `llm_docs/tailwind/grid-template-columns.mdx`
 - Spacing: `llm_docs/tailwind/padding.mdx`, `llm_docs/tailwind/margin.mdx`, `llm_docs/tailwind/gap.mdx`
@@ -166,6 +180,7 @@ When implementing UI features, proactively read the relevant Tailwind documentat
 - Always use path/url helpers to render a Rails route - never hardcode Rails urls/paths
 
 ## Testing guidelines
+
 - When using expectations, like something.expects(:...), always set the expectation in an instance of the class if it is available. Only use `any_instance.expects` if you can't grab the instance of the class that is the subject of what you are trying to mock/stub
 - Use VCR when tests require http requests.
 - Use the helpers from the `rails-controller-testing` gem for controller tests
@@ -184,6 +199,7 @@ The application uses the `heroicon` gem for consistent icons throughout the UI. 
 - **options**: Additional HTML attributes like classes
 
 Common icons used in the application:
+
 - Navigation: `bars-3`, `x-mark`, `home`, `user`, `cog-6-tooth`
 - Actions: `plus`, `pencil`, `trash`, `arrow-right`, `arrow-left`
 - Status: `check-circle`, `x-circle`, `exclamation-triangle`, `information-circle`

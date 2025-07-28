@@ -1,0 +1,63 @@
+# Rails generated files
+public/
+tmp/
+log/
+db/
+vendor/
+coverage/
+.bundle/
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+electron-out/
+app/assets/builds/
+
+# Documentation that should not be reformatted
+llm_docs/
+
+# Rails specific
+*.erb
+*.rb
+Gemfile
+Gemfile.lock
+Rakefile
+config.ru
+
+# YAML files with ERB syntax
+config/cable.yml
+
+# Database files
+*.sql
+*.sqlite3
+db/schema.rb
+db/seeds.rb
+
+# Git files
+.git/
+.gitignore
+
+# Environment files
+.env*
+
+# Package lock files (maintain their formatting)
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+
+# Cached files
+.cache/
+.parcel-cache/
+
+# OS files
+.DS_Store
+Thumbs.db

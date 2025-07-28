@@ -1,98 +1,103 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-  static targets = ["container", "row", "keyInput", "textField"]
+  static targets = ['container', 'row', 'keyInput', 'textField'];
 
   connect() {
     // Parse existing environment variables from the hidden text field
     if (this.hasTextFieldTarget && this.textFieldTarget.value) {
-      this.parseAndDisplayVariables(this.textFieldTarget.value)
+      this.parseAndDisplayVariables(this.textFieldTarget.value);
     }
-    
+
     // Listen for project changes from the filesystem browser controller
-    this.projectSelect = document.querySelector('[data-filesystem-browser-target="projectSelect"]')
+    this.projectSelect = document.querySelector('[data-filesystem-browser-target="projectSelect"]');
     if (this.projectSelect) {
-      this.projectSelect.addEventListener('change', this.handleProjectChange.bind(this))
+      this.projectSelect.addEventListener('change', this.handleProjectChange.bind(this));
       // If project is already selected, fetch its env vars
       if (this.projectSelect.value) {
-        this.fetchProjectEnvVars(this.projectSelect.value)
+        this.fetchProjectEnvVars(this.projectSelect.value);
       }
     }
   }
-  
+
   async handleProjectChange(event) {
-    const projectId = event.target.value
+    const projectId = event.target.value;
     if (projectId) {
-      await this.fetchProjectEnvVars(projectId)
+      await this.fetchProjectEnvVars(projectId);
     } else {
       // Clear all rows if no project is selected
-      this.containerTarget.innerHTML = ''
-      this.updateTextfield()
+      this.containerTarget.innerHTML = '';
+      this.updateTextfield();
     }
   }
-  
+
   async fetchProjectEnvVars(projectId) {
     try {
-      const response = await fetch(`/projects/${projectId}/environment_variables`)
-      const data = await response.json()
-      
+      const response = await fetch(`/projects/${projectId}/environment_variables`);
+      const data = await response.json();
+
       // Save current session-specific variables before clearing
-      const currentSessionVars = this.getCurrentSessionVariables()
-      
+      const currentSessionVars = this.getCurrentSessionVariables();
+
       // Clear everything
-      this.containerTarget.innerHTML = ''
-      
+      this.containerTarget.innerHTML = '';
+
       if (data.environment_variables && Object.keys(data.environment_variables).length > 0) {
         // Add section header for project variables
-        this.addSectionHeader('project', Object.keys(data.environment_variables).length)
-        
+        this.addSectionHeader('project', Object.keys(data.environment_variables).length);
+
         // Add project environment variables
         Object.entries(data.environment_variables).forEach(([key, value]) => {
-          this.addVariableRow(key, value, true) // true indicates it's from project
-        })
-        
+          this.addVariableRow(key, value, true); // true indicates it's from project
+        });
+
         // Add divider and section header for session-specific variables
-        this.addDivider()
-        this.addSectionHeader('session')
+        this.addDivider();
+        this.addSectionHeader('session');
       } else if (currentSessionVars.length > 0) {
         // No project vars, but we have session vars - just show session section
-        this.addSectionHeader('session')
+        this.addSectionHeader('session');
       }
-      
+
       // Restore session-specific variables
-      currentSessionVars.forEach(({key, value}) => {
-        this.addVariableRow(key, value, false)
-      })
-      
-      this.updateTextfield()
+      currentSessionVars.forEach(({ key, value }) => {
+        this.addVariableRow(key, value, false);
+      });
+
+      this.updateTextfield();
     } catch (error) {
-      console.error("Failed to fetch project environment variables:", error)
+      console.error('Failed to fetch project environment variables:', error);
     }
   }
-  
+
   getCurrentSessionVariables() {
-    const sessionVars = []
-    const rows = this.rowTargets
-    
-    rows.forEach(row => {
+    const sessionVars = [];
+    const rows = this.rowTargets;
+
+    rows.forEach((row) => {
       // Only get session-specific variables (not from project)
       if (row.dataset.fromProject === 'false') {
-        const inputContainer = row.querySelector('.flex.gap-2')
-        const inputs = inputContainer ? inputContainer.querySelectorAll('input[type="text"]') : row.querySelectorAll('input[type="text"]')
-        const key = inputs[0]?.value.trim()
-        const value = inputs[1]?.value.trim()
-        
-        if (key || value) { // Keep even if only one field has data
-          sessionVars.push({ key, value })
+        const inputContainer = row.querySelector('.flex.gap-2');
+        const inputs = inputContainer
+          ? inputContainer.querySelectorAll('input[type="text"]')
+          : row.querySelectorAll('input[type="text"]');
+        const key = inputs[0]?.value.trim();
+        const value = inputs[1]?.value.trim();
+
+        if (key || value) {
+          // Keep even if only one field has data
+          sessionVars.push({ key, value });
         }
       }
-    })
-    
-    return sessionVars
+    });
+
+    return sessionVars;
   }
-  
+
   addSectionHeader(type, count = null) {
-    const headerHtml = type === 'project' ? `
+    const headerHtml =
+      type === 'project'
+        ? `
       <div class="flex items-center gap-3 mb-3" data-section-header="project">
         <div class="flex items-center gap-2">
           <div class="flex items-center justify-center w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
@@ -106,7 +111,8 @@ export default class extends Controller {
           </div>
         </div>
       </div>
-    ` : `
+    `
+        : `
       <div class="flex items-center gap-3 mb-3" data-section-header="session">
         <div class="flex items-center gap-2">
           <div class="flex items-center justify-center w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -120,11 +126,11 @@ export default class extends Controller {
           </div>
         </div>
       </div>
-    `
-    
-    this.containerTarget.insertAdjacentHTML("beforeend", headerHtml)
+    `;
+
+    this.containerTarget.insertAdjacentHTML('beforeend', headerHtml);
   }
-  
+
   addDivider() {
     const dividerHtml = `
       <div class="relative my-6" data-divider="true">
@@ -135,43 +141,48 @@ export default class extends Controller {
           <span class="bg-white dark:bg-gray-800 px-3 text-gray-500 dark:text-gray-400 font-medium">or</span>
         </div>
       </div>
-    `
-    this.containerTarget.insertAdjacentHTML("beforeend", dividerHtml)
+    `;
+    this.containerTarget.insertAdjacentHTML('beforeend', dividerHtml);
   }
 
   parseAndDisplayVariables(text) {
-    const lines = text.trim().split('\n').filter(line => line.trim())
-    
+    const lines = text
+      .trim()
+      .split('\n')
+      .filter((line) => line.trim());
+
     if (lines.length > 0) {
       // Only add session header if we have variables to display
       // and there's no project section already
-      const hasProjectSection = this.containerTarget.querySelector('[data-section-header="project"]')
+      const hasProjectSection = this.containerTarget.querySelector(
+        '[data-section-header="project"]'
+      );
       if (!hasProjectSection) {
-        this.addSectionHeader('session')
+        this.addSectionHeader('session');
       }
-      
-      lines.forEach(line => {
-        const [key, ...valueParts] = line.split('=')
+
+      lines.forEach((line) => {
+        const [key, ...valueParts] = line.split('=');
         if (key) {
-          const value = valueParts.join('=') // Handle values that contain '='
-          this.addVariableRow(key.trim(), value.trim())
+          const value = valueParts.join('='); // Handle values that contain '='
+          this.addVariableRow(key.trim(), value.trim());
         }
-      })
+      });
     }
   }
 
   addVariableRow(key = '', value = '', fromProject = false) {
-    const timestamp = new Date().getTime()
-    
+    const timestamp = new Date().getTime();
+
     // Different styles for project vs session variables
-    const rowClasses = fromProject 
+    const rowClasses = fromProject
       ? 'group relative pl-4 border-l-2 border-orange-200 dark:border-orange-900/50'
-      : 'pl-4'
-    
+      : 'pl-4';
+
     const inputClasses = fromProject
       ? 'flex-1 px-3 py-2 bg-orange-50 dark:bg-orange-900/10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 dark:focus:ring-orange-500 font-mono text-sm placeholder-gray-400 dark:placeholder-gray-500'
-      : 'flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 dark:focus:ring-orange-500 font-mono text-sm'
-    
+      : 'flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 dark:focus:ring-orange-500 font-mono text-sm';
+
     const template = `
       <div class="${rowClasses} mb-2" data-session-environment-variables-target="row" data-from-project="${fromProject}">
         <div class="flex gap-2 items-start">
@@ -197,93 +208,101 @@ export default class extends Controller {
             </svg>
           </button>
         </div>
-        ${fromProject ? `
+        ${
+          fromProject
+            ? `
           <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-full bg-orange-300 dark:bg-orange-700 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
-    `
-    
-    this.containerTarget.insertAdjacentHTML("beforeend", template)
-    
+    `;
+
+    this.containerTarget.insertAdjacentHTML('beforeend', template);
+
     // Focus on the new key input if it's a new empty row
     if (!key && !value && !fromProject) {
-      const newRow = this.containerTarget.lastElementChild
-      const keyInput = newRow.querySelector('[data-session-environment-variables-target="keyInput"]')
+      const newRow = this.containerTarget.lastElementChild;
+      const keyInput = newRow.querySelector(
+        '[data-session-environment-variables-target="keyInput"]'
+      );
       if (keyInput) {
-        keyInput.focus()
+        keyInput.focus();
       }
     }
   }
 
   add() {
     // Check if we have sections
-    const hasProjectSection = this.containerTarget.querySelector('[data-section-header="project"]')
-    const sessionHeader = this.containerTarget.querySelector('[data-section-header="session"]')
-    
+    const hasProjectSection = this.containerTarget.querySelector('[data-section-header="project"]');
+    const sessionHeader = this.containerTarget.querySelector('[data-section-header="session"]');
+
     if (hasProjectSection && !sessionHeader) {
       // Add session section if it doesn't exist
-      this.addDivider()
-      this.addSectionHeader('session')
+      this.addDivider();
+      this.addSectionHeader('session');
     } else if (!hasProjectSection && !sessionHeader) {
       // If no sections exist, add session header first
-      this.addSectionHeader('session')
+      this.addSectionHeader('session');
     }
-    
+
     // Add the new row at the end (which will be in the session section)
-    this.addVariableRow()
+    this.addVariableRow();
   }
 
   remove(event) {
-    const row = event.currentTarget.closest('[data-session-environment-variables-target="row"]')
+    const row = event.currentTarget.closest('[data-session-environment-variables-target="row"]');
     if (row) {
-      const isProjectVar = row.dataset.fromProject === 'true'
-      row.remove()
-      
+      const isProjectVar = row.dataset.fromProject === 'true';
+      row.remove();
+
       // Check if we need to clean up empty sections
-      const projectRows = this.containerTarget.querySelectorAll('[data-from-project="true"]')
-      const sessionRows = this.containerTarget.querySelectorAll('[data-from-project="false"]')
-      
+      const projectRows = this.containerTarget.querySelectorAll('[data-from-project="true"]');
+      const sessionRows = this.containerTarget.querySelectorAll('[data-from-project="false"]');
+
       // If we removed the last project variable, remove the project section
       if (isProjectVar && projectRows.length === 0) {
-        const projectHeader = this.containerTarget.querySelector('[data-section-header="project"]')
-        const divider = this.containerTarget.querySelector('[data-divider="true"]')
-        if (projectHeader) projectHeader.remove()
-        if (divider) divider.remove()
+        const projectHeader = this.containerTarget.querySelector('[data-section-header="project"]');
+        const divider = this.containerTarget.querySelector('[data-divider="true"]');
+        if (projectHeader) projectHeader.remove();
+        if (divider) divider.remove();
       }
-      
+
       // If no variables remain at all, remove all headers
       if (projectRows.length === 0 && sessionRows.length === 0) {
-        this.containerTarget.innerHTML = ''
+        this.containerTarget.innerHTML = '';
       }
-      
-      this.updateTextfield()
+
+      this.updateTextfield();
     }
   }
 
   updateTextfield() {
-    const rows = this.rowTargets
-    const variables = []
-    
-    rows.forEach(row => {
+    const rows = this.rowTargets;
+    const variables = [];
+
+    rows.forEach((row) => {
       // Get inputs from the flex container within the row
-      const inputContainer = row.querySelector('.flex.gap-2')
-      const inputs = inputContainer ? inputContainer.querySelectorAll('input[type="text"]') : row.querySelectorAll('input[type="text"]')
-      const key = inputs[0]?.value.trim()
-      const value = inputs[1]?.value.trim()
-      
+      const inputContainer = row.querySelector('.flex.gap-2');
+      const inputs = inputContainer
+        ? inputContainer.querySelectorAll('input[type="text"]')
+        : row.querySelectorAll('input[type="text"]');
+      const key = inputs[0]?.value.trim();
+      const value = inputs[1]?.value.trim();
+
       if (key && value) {
-        variables.push(`${key}=${value}`)
+        variables.push(`${key}=${value}`);
       }
-    })
-    
+    });
+
     if (this.hasTextFieldTarget) {
-      this.textFieldTarget.value = variables.join('\n')
+      this.textFieldTarget.value = variables.join('\n');
     }
   }
 
   escapeHtml(text) {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 }

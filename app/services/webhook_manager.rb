@@ -6,67 +6,82 @@ class WebhookManager
 
   def initialize
     @running = true
-    # For subscriptions, we need a dedicated connection outside the pool
-    redis_config = Rails.application.config_for(:redis)
-    @redis_sub = Redis.new(url: redis_config["url"])
     @threads = []
+
+    if ENV["ACTION_CABLE_ADAPTER"] == "async" && ENV["ELECTRON_APP"] == "true"
+      Rails.logger.info("WebhookManager running in Electron mode - Redis pub/sub disabled")
+      @redis_sub = nil
+    else
+      # Need dedicated connection outside the pool for subscriptions
+      redis_config = Rails.application.config_for(:redis)
+      @redis_sub = Redis.new(url: redis_config["url"])
+    end
+
     setup_signal_handlers
   end
 
   def run
-    Rails.logger.info("Starting Webhook Manager with Redis pub/sub")
+    Rails.logger.info("Starting Webhook Manager#{@redis_sub ? " with Redis pub/sub" : " in Electron mode"}")
 
     # Initial sync on startup
     sync_all_webhooks
 
-    begin
-      # Start Redis subscription in a separate thread
-      @threads << Thread.new do
-        Rails.logger.info("Starting Redis subscription thread")
+    if @redis_sub
+      begin
+        # Start Redis subscription in a separate thread
+        @threads << Thread.new do
+          Rails.logger.info("Starting Redis subscription thread")
 
-        @redis_sub.subscribe(WEBHOOK_CHANGES_CHANNEL, WEBHOOK_EVENTS_CHANNEL) do |on|
-          on.subscribe do |channel, subscriptions|
-            Rails.logger.info("Subscribed to #{channel} (#{subscriptions} subscriptions)")
-          end
+          @redis_sub.subscribe(WEBHOOK_CHANGES_CHANNEL, WEBHOOK_EVENTS_CHANNEL) do |on|
+            on.subscribe do |channel, subscriptions|
+              Rails.logger.info("Subscribed to #{channel} (#{subscriptions} subscriptions)")
+            end
 
-          on.message do |channel, message|
-            if @running
-              Rails.logger.info("Received message on #{channel}: #{message}")
-              case channel
-              when WEBHOOK_CHANGES_CHANNEL
-                handle_notification(message)
-              when WEBHOOK_EVENTS_CHANNEL
-                handle_events_changed(message)
+            on.message do |channel, message|
+              if @running
+                Rails.logger.info("Received message on #{channel}: #{message}")
+                case channel
+                when WEBHOOK_CHANGES_CHANNEL
+                  handle_notification(message)
+                when WEBHOOK_EVENTS_CHANNEL
+                  handle_events_changed(message)
+                end
               end
             end
-          end
 
-          on.unsubscribe do |channel, subscriptions|
-            Rails.logger.info("Unsubscribed from #{channel} (#{subscriptions} subscriptions)")
+            on.unsubscribe do |channel, subscriptions|
+              Rails.logger.info("Unsubscribed from #{channel} (#{subscriptions} subscriptions)")
+            end
           end
+        rescue => e
+          Rails.logger.error("Redis subscription error: #{e.message}")
+          Rails.logger.error(e.backtrace.join("\n"))
+        end
+
+        # Main thread for health checks
+        while @running
+          check_process_health
+          sleep(5) # Check health every 5 seconds
         end
       rescue => e
-        Rails.logger.error("Redis subscription error: #{e.message}")
+        Rails.logger.error("WebhookManager error: #{e.message}")
         Rails.logger.error(e.backtrace.join("\n"))
-      end
+        raise
+      ensure
+        Rails.logger.info("WebhookManager shutting down...")
 
-      # Main thread for health checks
+        # Stop Redis subscription
+        @redis_sub&.unsubscribe
+
+        # Wait for threads to finish
+        @threads.each(&:join)
+      end
+    else
+      # Run health checks without Redis in Electron mode
       while @running
         check_process_health
-        sleep(5) # Check health every 5 seconds
+        sleep(5)
       end
-    rescue => e
-      Rails.logger.error("WebhookManager error: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-      raise
-    ensure
-      Rails.logger.info("WebhookManager shutting down...")
-
-      # Stop Redis subscription
-      @redis_sub&.unsubscribe
-
-      # Wait for threads to finish
-      @threads.each(&:join)
 
       # Stop all webhook processes
       stop_all_webhook_processes

@@ -23,11 +23,14 @@ SwarmUI provides an intuitive browser-based interface to create, view, and manag
 ## Requirements
 
 ### Core Dependencies
+
 - **Ruby >= 3.4** (required - must be installed before running the installer)
 - **Bundler** (Ruby's package manager)
 
 ### System Dependencies
+
 The following will be installed automatically by the installation script:
+
 - **ttyd** - Terminal emulator for web access
 - **tmux** - Terminal multiplexer for session management
 - **gh CLI** - GitHub command line interface
@@ -35,17 +38,21 @@ The following will be installed automatically by the installation script:
 - **Redis** - For pub/sub and webhook notifications (must be available as `redis-server` in your PATH)
 
 ### Database
+
 - **SQLite** - Embedded database (no separate server required)
 
 ## Installation
 
 ### Prerequisites
+
 Ensure Ruby 3.4 or higher is installed:
+
 ```bash
 ruby --version  # Should show 3.4.0 or higher
 ```
 
 If Ruby is not installed or needs upgrading:
+
 - **macOS**: `brew install ruby`
 - **Ubuntu/Debian**: `sudo apt-get install ruby-full`
 - **Other platforms**: See [Ruby installation guide](https://www.ruby-lang.org/en/documentation/installation/)
@@ -53,16 +60,20 @@ If Ruby is not installed or needs upgrading:
 ### Quick Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/parruda/swarm-ui.git
 cd swarm-ui
 ```
 
 2. Run the installer script:
+
 ```bash
 bin/install
 ```
+
 This will:
+
 - Install all required system dependencies (ttyd, tmux, gh CLI, and Redis)
 - Install Ruby dependencies (bundle install)
 - Create and migrate the database
@@ -72,7 +83,9 @@ This will:
 ```bash
 bin/start
 ```
+
 This starts all services:
+
 - Rails app runs on port 4269
 - ttyd terminal runs on port 4268
 - Redis runs on a Unix socket
@@ -82,23 +95,28 @@ The application will be available at `http://localhost:4269`
 ## Development
 
 ### Initial Setup
+
 ```bash
 bin/setup
 ```
+
 This will:
+
 - Install Ruby dependencies
 - Create and migrate the SQLite database
 - Start the development server
 
 ### Running Development Mode
+
 ```bash
 bin/dev
 ```
+
 This starts all services including Redis, Rails server, Tailwind CSS watcher, and ttyd.
 
 The application will be available at:
-- `http://localhost:3000` when using `bin/dev`
 
+- `http://localhost:3000` when using `bin/dev`
 
 ### Running Tests
 

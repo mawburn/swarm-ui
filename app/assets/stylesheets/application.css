@@ -11,11 +11,11 @@
 
 /* Hide scrollbars on iframes */
 iframe {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 iframe::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari, Opera */
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Dark scrollbar styles */
@@ -44,22 +44,24 @@ iframe::-webkit-scrollbar {
 }
 
 /* Smooth expand/collapse animations for log entries */
-[data-log-expansion-target="truncated"],
-[data-log-expansion-target="full"] {
+[data-log-expansion-target='truncated'],
+[data-log-expansion-target='full'] {
   transition: all 0.3s ease-in-out;
 }
 
 /* Make the chevron rotation smooth */
-[data-log-expansion-target="chevron"] {
+[data-log-expansion-target='chevron'] {
   transition: transform 0.2s ease-in-out;
 }
 
 /* Smooth hover effects on log entries */
-[data-log-expansion-target="entry"] {
-  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+[data-log-expansion-target='entry'] {
+  transition:
+    border-color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
 }
 
-[data-log-expansion-target="entry"]:hover {
+[data-log-expansion-target='entry']:hover {
   background-color: rgba(255, 255, 255, 0.02);
 }
 
@@ -152,4 +154,3 @@ iframe::-webkit-scrollbar {
 .calc-height-minus-tabs {
   height: calc(100% - 41px); /* Subtract tab bar height */
 }
-

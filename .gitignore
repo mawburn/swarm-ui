@@ -42,3 +42,9 @@
 !/app/assets/builds/.keep
 .env
 vendor/
+
+node_modules
+
+# Electron build output
+dist/
+electron/dist/
