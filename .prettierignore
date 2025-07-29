@@ -1,0 +1,48 @@
+# Ruby/Rails files
+*.rb
+*.erb
+*.yml
+*.yaml
+Gemfile
+Gemfile.lock
+Rakefile
+config.ru
+
+# Rails directories
+app/views/**
+app/helpers/**
+config/**
+db/**
+lib/**
+test/**
+spec/**
+
+# Generated/vendor files
+vendor/**
+node_modules/**
+public/assets/**
+public/packs/**
+app/assets/builds/**
+tmp/**
+log/**
+coverage/**
+.bundle/**
+
+# Build output
+dist/**
+build/**
+*.log
+
+# Git
+.git/**
+.gitignore
+
+# Documentation
+*.md
+LICENSE
+README
+
+# Config files that shouldn't be formatted
+.rubocop.yml
+.babelrc
+.browserslistrc
