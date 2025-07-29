@@ -1,26 +1,26 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = {
-    interval: { type: Number, default: 3000 },
-  };
+  static values = { 
+    interval: { type: Number, default: 3000 }
+  }
 
   connect() {
-    this.checkAndRefresh();
+    this.checkAndRefresh()
   }
 
   disconnect() {
-    this.stopRefreshing();
+    this.stopRefreshing()
   }
 
   checkAndRefresh() {
     // Check if there are any importing projects
-    const hasImportingProjects = !!this.element.querySelector('[data-import-status="importing"]');
-
+    const hasImportingProjects = !!this.element.querySelector('[data-import-status="importing"]')
+    
     if (hasImportingProjects) {
-      this.startRefreshing();
+      this.startRefreshing()
     } else {
-      this.stopRefreshing();
+      this.stopRefreshing()
     }
   }
 
@@ -28,15 +28,15 @@ export default class extends Controller {
     if (!this.refreshTimer) {
       this.refreshTimer = setInterval(() => {
         // Simply reload the page to get updated content
-        window.location.reload();
-      }, this.intervalValue);
+        window.location.reload()
+      }, this.intervalValue)
     }
   }
 
   stopRefreshing() {
     if (this.refreshTimer) {
-      clearInterval(this.refreshTimer);
-      this.refreshTimer = null;
+      clearInterval(this.refreshTimer)
+      this.refreshTimer = null
     }
   }
 }

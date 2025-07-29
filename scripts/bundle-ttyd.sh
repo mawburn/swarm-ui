@@ -15,7 +15,7 @@ download_ttyd() {
     local platform=$1
     local filename=$2
     local url="https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/${filename}"
-    
+
     echo "Downloading ttyd for ${platform}..."
     curl -L -o "${BUNDLED_DIR}/ttyd-${platform}" "$url"
     chmod +x "${BUNDLED_DIR}/ttyd-${platform}"

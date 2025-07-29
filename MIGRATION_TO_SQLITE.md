@@ -23,7 +23,6 @@ BUNDLE_GEMFILE=Gemfile.migrate bundle exec bin/migrate_to_sqlite
 ```
 
 This will:
-
 - Export all data from your PostgreSQL database to a JSON backup file in `tmp/`
 - Create new SQLite database files in the `storage/` directory
 - Migrate all data including proper JSON conversion
@@ -66,10 +65,9 @@ bin/dev
 ## File Structure Changes
 
 The migration creates the following SQLite database files:
-
 - `storage/development.sqlite3` - Main application database
 - `storage/development_cache.sqlite3` - Solid Cache database
-- `storage/development_queue.sqlite3` - Solid Queue database
+- `storage/development_queue.sqlite3` - Solid Queue database  
 - `storage/development_cable.sqlite3` - Solid Cable database
 
 ## Rollback Instructions
@@ -77,7 +75,7 @@ The migration creates the following SQLite database files:
 If you need to rollback to PostgreSQL:
 
 1. Restore your `Gemfile` to include `gem "pg", "~> 1.1"` instead of `sqlite3`
-2. Restore the original `config/database.yml`
+2. Restore the original `config/database.yml` 
 3. Restore `Procfile.start` to include the postgres process
 4. Restore the PostgreSQL startup scripts (`bin/pg-start`, `bin/pg-dev`)
 5. Run `bundle install`

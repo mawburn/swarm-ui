@@ -1,10 +1,10 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ['container', 'row', 'keyInput'];
+  static targets = ["container", "row", "keyInput"]
 
   add() {
-    const timestamp = new Date().getTime();
+    const timestamp = new Date().getTime()
     const template = `
       <div class="flex gap-2 items-start" data-environment-variables-target="row">
         <input type="text"
@@ -26,22 +26,22 @@ export default class extends Controller {
           </svg>
         </button>
       </div>
-    `;
-
-    this.containerTarget.insertAdjacentHTML('beforeend', template);
-
+    `
+    
+    this.containerTarget.insertAdjacentHTML("beforeend", template)
+    
     // Focus on the new key input
-    const newRow = this.containerTarget.lastElementChild;
-    const keyInput = newRow.querySelector('[data-environment-variables-target="keyInput"]');
+    const newRow = this.containerTarget.lastElementChild
+    const keyInput = newRow.querySelector('[data-environment-variables-target="keyInput"]')
     if (keyInput) {
-      keyInput.focus();
+      keyInput.focus()
     }
   }
 
   remove(event) {
-    const row = event.currentTarget.closest('[data-environment-variables-target="row"]');
+    const row = event.currentTarget.closest('[data-environment-variables-target="row"]')
     if (row) {
-      row.remove();
+      row.remove()
     }
   }
 }

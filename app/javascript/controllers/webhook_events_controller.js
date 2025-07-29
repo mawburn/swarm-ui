@@ -1,15 +1,15 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   selectAll() {
-    this.checkboxes.forEach((checkbox) => (checkbox.checked = true));
+    this.checkboxes.forEach(checkbox => checkbox.checked = true)
   }
 
   deselectAll() {
-    this.checkboxes.forEach((checkbox) => (checkbox.checked = false));
+    this.checkboxes.forEach(checkbox => checkbox.checked = false)
   }
 
   get checkboxes() {
-    return this.element.querySelectorAll('input[type="checkbox"]');
+    return this.element.querySelectorAll('input[type="checkbox"]')
   }
 }
