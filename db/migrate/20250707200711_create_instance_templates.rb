@@ -9,9 +9,9 @@ class CreateInstanceTemplates < ActiveRecord::Migration[8.0]
       t.string(:provider) # claude, openai
       t.text(:prompt)
       t.string(:directory)
-      t.jsonb(:tools) # Array of tool names ["Read", "Edit", "Bash", etc]
-      t.jsonb(:allowed_tools) # Optional restriction of tools
-      t.jsonb(:disallowed_tools) # Optional tools to explicitly disallow
+      t.json(:tools) # Array of tool names ["Read", "Edit", "Bash", etc]
+      t.json(:allowed_tools) # Optional restriction of tools
+      t.json(:disallowed_tools) # Optional tools to explicitly disallow
       t.boolean(:worktree, default: false)
       t.boolean(:vibe, default: false) # Dangerous mode with fewer restrictions
 

@@ -17,7 +17,7 @@ class CreateProjects < ActiveRecord::Migration[8.0]
 
       # Advanced features
       t.text(:environment_variables) # encrypted
-      t.jsonb(:preferred_models, default: {})
+      t.json(:preferred_models, default: {})
 
       t.timestamps
 

@@ -13,7 +13,7 @@ class CreateSessions < ActiveRecord::Migration[8.0]
       t.string(:status) # active, completed, failed
       t.text(:configuration) # Full YAML content used for this session
       t.string(:configuration_path) # Original file path
-      t.jsonb(:metadata) # Additional metadata from session_metadata.json
+      t.json(:metadata) # Additional metadata from session_metadata.json
 
       t.timestamps
     end

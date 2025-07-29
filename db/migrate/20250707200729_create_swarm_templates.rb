@@ -5,7 +5,7 @@ class CreateSwarmTemplates < ActiveRecord::Migration[8.0]
     create_table(:swarm_templates) do |t|
       t.string(:name, null: false)
       t.text(:description)
-      t.jsonb(:instance_config) # Which instances and their connections
+      t.json(:instance_config) # Which instances and their connections
       t.string(:main_instance)
 
       t.timestamps

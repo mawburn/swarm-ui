@@ -7,7 +7,9 @@
     "electron": "electron electron/main.js",
     "build": "electron-builder",
     "dist": "pnpm run prepare-build && pnpm run build",
-    "prepare-build": "bash scripts/bundle-ruby.sh && bash scripts/bundle-ttyd.sh"
+    "prepare-build": "bash scripts/bundle-ruby.sh && bash scripts/bundle-ttyd.sh",
+    "bundle-ttyd": "bash scripts/bundle-ttyd.sh",
+    "postinstall": "bash scripts/bundle-ttyd.sh"
   },
   "keywords": [
     "rails",

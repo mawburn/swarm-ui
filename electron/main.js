@@ -94,7 +94,7 @@ function runDatabaseMigrations() {
       execSync('bundle exec rails solid_queue:install', {
         cwd: railsRoot,
         env: Object.assign({}, process.env, {
-          RAILS_ENV: 'production',
+          RAILS_ENV: 'development',
           ACTION_CABLE_ADAPTER: 'async',
           ELECTRON_APP: 'true',
           SECRET_KEY_BASE:
@@ -109,7 +109,7 @@ function runDatabaseMigrations() {
     execSync('bundle exec rails db:prepare', {
       cwd: railsRoot,
       env: Object.assign({}, process.env, {
-        RAILS_ENV: 'production',
+        RAILS_ENV: 'development',
         ACTION_CABLE_ADAPTER: 'async',
         ELECTRON_APP: 'true',
         SECRET_KEY_BASE:
@@ -120,20 +120,8 @@ function runDatabaseMigrations() {
 
     console.log('Database migrations completed');
 
-    // Precompile assets
-    console.log('Precompiling assets...');
-    execSync('bundle exec rails assets:precompile', {
-      cwd: railsRoot,
-      env: Object.assign({}, process.env, {
-        RAILS_ENV: 'production',
-        ACTION_CABLE_ADAPTER: 'async',
-        ELECTRON_APP: 'true',
-        SECRET_KEY_BASE:
-          process.env.SECRET_KEY_BASE || 'development-secret-key-base-for-electron-app-only',
-      }),
-      encoding: 'utf8',
-    });
-    console.log('Assets precompiled successfully');
+    // Skip asset precompilation in development mode
+    console.log('Skipping asset precompilation in development mode');
 
     return true;
   } catch (error) {
@@ -164,15 +152,8 @@ async function startRailsServer() {
       return;
     }
 
-    // Run database migrations
-    if (!runDatabaseMigrations()) {
-      dialog.showErrorBox(
-        'Database Setup Failed',
-        'Failed to set up the database. Please check the logs for more information.'
-      );
-      app.quit();
-      return;
-    }
+    // Skip database migrations for now - assume database is already set up
+    console.log('Skipping database setup - using existing database');
     // Find available port
     railsPort = await findAvailablePort(3000);
     console.log(`Starting Rails server on port ${railsPort}`);
@@ -180,7 +161,7 @@ async function startRailsServer() {
     // Set up environment
     const env = Object.assign({}, process.env, {
       PORT: railsPort,
-      RAILS_ENV: 'production',
+      RAILS_ENV: 'development',
       RAILS_SERVE_STATIC_FILES: 'true',
       SECRET_KEY_BASE:
         process.env.SECRET_KEY_BASE || 'development-secret-key-base-for-electron-app-only',
@@ -314,8 +295,11 @@ function createWindow() {
     icon: path.join(__dirname, 'icon.png'),
   });
 
-  // Load the Rails app
+  // Load the Rails app with cache busting
   mainWindow.loadURL(`http://localhost:${railsPort}`);
+  
+  // Clear cache on first load to ensure fresh assets
+  mainWindow.webContents.session.clearCache();
 
   // Open DevTools in development
   if (process.env.NODE_ENV === 'development') {

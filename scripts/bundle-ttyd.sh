@@ -3,7 +3,7 @@
 
 set -e
 
-TTYD_VERSION="1.7.4"
+TTYD_VERSION="1.7.7"
 BUNDLED_DIR="bundled/binaries"
 
 echo "Downloading ttyd binaries for distribution..."
@@ -25,9 +25,9 @@ download_ttyd() {
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Check architecture
     if [[ $(uname -m) == "arm64" ]]; then
-        download_ttyd "darwin-arm64" "ttyd.aarch64"
+        download_ttyd "darwin-arm64" "ttyd.aarch64-apple-darwin"
     else
-        download_ttyd "darwin-x64" "ttyd.x86_64"
+        download_ttyd "darwin-x64" "ttyd.x86_64-apple-darwin"
     fi
 fi
 

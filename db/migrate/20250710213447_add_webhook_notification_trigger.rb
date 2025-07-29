@@ -2,6 +2,9 @@
 
 class AddWebhookNotificationTrigger < ActiveRecord::Migration[8.0]
   def up
+    # Skip for SQLite - triggers are PostgreSQL-specific
+    return if ActiveRecord::Base.connection.adapter_name == "SQLite"
+    
     execute(<<-SQL)
       CREATE OR REPLACE FUNCTION notify_webhook_change() RETURNS TRIGGER AS $$
       BEGIN
@@ -28,6 +31,9 @@ class AddWebhookNotificationTrigger < ActiveRecord::Migration[8.0]
   end
 
   def down
+    # Skip for SQLite - triggers are PostgreSQL-specific
+    return if ActiveRecord::Base.connection.adapter_name == "SQLite"
+    
     execute(<<-SQL)
       DROP TRIGGER IF EXISTS webhook_change_trigger ON projects;
       DROP FUNCTION IF EXISTS notify_webhook_change();
